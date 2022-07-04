@@ -5,19 +5,22 @@ Written in Python by Kerby Keith Aquino<skepfoosky15@gmail.com>
 """
 import disnake
 import os
-import argparse
+from disnake.ext import commands, tasks
 from colorama import *
 from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 
+intents = disnake.Intents.all()
+client = commands.Bot(command_prefix="d!", intents=intents, sync_commands_debug=True)
 
-class CrimsonPaw(disnake.Client):
-    async def on_ready(self):
-        print(f"{Fore.LIGHTGREEN_EX}Client is ready! Logged on as {self.user}.{Style.RESET_ALL}")
+@client.slash_command(description="Ping the bot for testing purposes")
+async def ping(inter):
+    await inter.response.send_message("Bing bongs")
 
-    async def on_message(self, message):
-        print(f"Message from {message.author}: \"{message.content}\"")
+@client.event
+async def on_ready():
+    print(f"{Back.GREEN}[!]{Back.RESET} Bot is ready!")
+    # await client.change_presence(activity=disnake.Game(name="testing testing"))
 
-
-client = CrimsonPaw().run(os.getenv("TOKEN"))
+client.run(os.getenv("TOKEN"))
